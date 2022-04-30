@@ -7,10 +7,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.generation.blogpessoal.repository.PostagemRepository;
+import java.util.List;
+
 
 @Entity
 @Table (name = "tb_postagens")
@@ -63,4 +72,5 @@ public class Postagem {
 		this.data = data;
 	}
 	
+
 }
