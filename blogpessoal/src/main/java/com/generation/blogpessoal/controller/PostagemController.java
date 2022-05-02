@@ -49,29 +49,29 @@ public class PostagemController {
 	@GetMapping("/titulo/{titulo}")
 	public  ResponseEntity<List<Postagem>> getByTitulo (@PathVariable String titulo){
 		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo));
-		
 	}
-	
+	//lembrando que para esta etapa é necessário selecionar o método post, o corpo (body) raw 
+	//e a linguagem JSON. Depois de escrever o post, é só clicar em send no postman
 	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(repository.save(postagem));
+		
 	}
-	
 	@PutMapping
-	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem){
+	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
 		return repository.findById(postagem.getId())
 				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
 						.body(repository.save(postagem)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)).build());
+					.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
-		Optional<Postagem> postagem = repository.findById(id);
+		java.util.Optional<Postagem> postagem = repository.findById(id); //perguntar se a sugestão ''java util'' está correta!
 		
-		if(postagem.isEmpity())
+		if(postagem.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		
 		repository.deleteById(id);				
