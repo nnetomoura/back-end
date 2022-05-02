@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
-
-import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 @RestController
 @RequestMapping ("/postagens")
@@ -32,11 +30,12 @@ public class PostagemController {
 	@Autowired
 	private PostagemRepository repository;
 	
+	@Autowired
+	private TemaRepository temaRepository;
+	
 	@GetMapping
 	public ResponseEntity<List<Postagem>> GetAll (){
-		
 		return ResponseEntity.ok(repository.findAll());
-			
 	}
 	
 	@GetMapping ("/{id}")
@@ -52,20 +51,40 @@ public class PostagemController {
 	}
 	//lembrando que para esta etapa é necessário selecionar o método post, o corpo (body) raw 
 	//e a linguagem JSON. Depois de escrever o post, é só clicar em send no postman
+	
 	@PostMapping
-	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(repository.save(postagem));
+	public ResponseEntity <Postagem> post(@Valid @RequestBody Postagem postagem) {
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(repository.save(postagem));
 		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
+	
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
+		if (repository.existsById(postagem.getId())) {
+			if (temaRepository.existsById(postagem.getTema().getId()))
+				return ResponseEntity.status(HttpStatus.OK)
+					.body(repository.save(postagem));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			}
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}
+	
+	
+	
+	
+	
+	
+	/*public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
 		return repository.findById(postagem.getId())
 				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
 						.body(repository.save(postagem)))
 					.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
-	
+		*/
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
