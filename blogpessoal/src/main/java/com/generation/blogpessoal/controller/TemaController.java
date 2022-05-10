@@ -29,8 +29,9 @@ import com.generation.blogpessoal.repository.TemaRepository;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class TemaController {
 
-	@Autowired private TemaRepository temaRepository;
-	
+	@Autowired 
+	private TemaRepository temaRepository;
+		
 	@GetMapping 
 	public ResponseEntity <List<Tema>> getAll() { 
 		return ResponseEntity.ok(temaRepository.findAll());

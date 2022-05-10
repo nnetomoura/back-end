@@ -23,76 +23,60 @@ import com.generation.blogpessoal.repository.PostagemRepository;
 import com.generation.blogpessoal.repository.TemaRepository;
 
 @RestController
-@RequestMapping ("/postagens")
-@CrossOrigin ("*")
+@RequestMapping("/postagens")
+@CrossOrigin("*")
 public class PostagemController {
 
 	@Autowired
 	private PostagemRepository repository;
-	
+
 	@Autowired
 	private TemaRepository temaRepository;
-	
+
 	@GetMapping
-	public ResponseEntity<List<Postagem>> GetAll (){
+	public ResponseEntity<List<Postagem>> GetAll() {
 		return ResponseEntity.ok(repository.findAll());
 	}
-	
-	@GetMapping ("/{id}")
-	public ResponseEntity<Postagem> getById (@PathVariable Long id) {
-		return repository.findById(id)
-				.map( resposta -> ResponseEntity.ok(resposta))
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
+		return repository.findById(id).map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
-	
+
 	@GetMapping("/titulo/{titulo}")
-	public  ResponseEntity<List<Postagem>> getByTitulo (@PathVariable String titulo){
+	public ResponseEntity<List<Postagem>> getByTitulo(@PathVariable String titulo) {
 		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo));
 	}
-	//lembrando que para esta etapa é necessário selecionar o método post, o corpo (body) raw 
-	//e a linguagem JSON. Depois de escrever o post, é só clicar em send no postman
 	
 	@PostMapping
-	public ResponseEntity <Postagem> post(@Valid @RequestBody Postagem postagem) {
+	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
 		if (temaRepository.existsById(postagem.getTema().getId()))
-			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(repository.save(postagem));
-		
+			return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(postagem));
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
-	
+
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
 		if (repository.existsById(postagem.getId())) {
 			if (temaRepository.existsById(postagem.getTema().getId()))
-				return ResponseEntity.status(HttpStatus.OK)
-					.body(repository.save(postagem));
+				return ResponseEntity.status(HttpStatus.OK).body(repository.save(postagem));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-		
+		}
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
-	
-	
-	
-	
-	
-	
-	/*public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-		return repository.findById(postagem.getId())
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
-						.body(repository.save(postagem)))
-					.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-	}
-		*/
+
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
-		java.util.Optional<Postagem> postagem = repository.findById(id); //perguntar se a sugestão ''java util'' está correta!
-		
-		if(postagem.isEmpty())
+		java.util.Optional<Postagem> postagem = repository.findById(id); // perguntar se a sugestão ''java util'' está
+																			// correta!
+
+		if (postagem.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		
-		repository.deleteById(id);				
+
+		repository.deleteById(id);
 	}
 }
