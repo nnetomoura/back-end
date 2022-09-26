@@ -34,6 +34,7 @@ public class UsuarioControllerTest {
 	@Autowired
 	private UsuarioService usuarioService;
 
+	//teste para criação (via cadastro) de usuário no banco de dados em questão; 
 	@Test
 	@Order(1)
 	@DisplayName("Cadastrar Um Usuário")
@@ -51,7 +52,7 @@ public class UsuarioControllerTest {
 		assertEquals(requisicao.getBody().getUsuario(), resposta.getBody().getUsuario());
 	}
 	
-
+	//teste para não permitir duplicação de usuário por meio do método POST
 	@Test
 	@Order(2)
 	@DisplayName("Não deve permitir duplicação do Usuário")
@@ -68,7 +69,7 @@ public class UsuarioControllerTest {
 
 		assertEquals(HttpStatus.BAD_REQUEST, resposta.getStatusCode());
 	}
-	
+	//teste para atualização de um usuário já cadastrado; método PUT 
 	@Test
 	@Order(3)
 	@DisplayName("Alterar um Usuário")
@@ -92,6 +93,7 @@ public class UsuarioControllerTest {
 		assertEquals(usuarioUpdate.getUsuario(), resposta.getBody().getUsuario());
 	}
 
+	//teste para captar todos os usuários por meio de um GET e devolver uma LISTA com os mesmos.
 	@Test
 	@Order(4)
 	@DisplayName("Listar todos os Usuários")
